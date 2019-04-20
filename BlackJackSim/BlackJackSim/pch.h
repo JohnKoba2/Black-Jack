@@ -31,6 +31,7 @@ Ace = 14
 } RANK;
 
 
+
 typedef struct Card {
 	RANK rank;
 	const char* Suit;
@@ -42,5 +43,8 @@ void showLeaderboard();
 void clearScreen();
 void shuffle();
 void beginGame();
+void saveGame();
+void loadGame();
+void playGame();
 
 #endif //PCH_H

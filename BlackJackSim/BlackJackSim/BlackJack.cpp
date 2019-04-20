@@ -16,16 +16,17 @@ const char* rankName[] = {
 "","A","2","3","4","5","6","7","8","9","10","J","Q","K","A"
 };
 
+
 CARD standardDeck[] = { 
 	{Two, Heart},
 	{Three, Heart},
 	{Four, Heart},
 	{Five, Heart},
-	{Six, Heart },
-	{Seven, Heart },
-	{Eight, Heart },
-	{Nine, Heart },
-	{Ten, Heart },
+	{Six, Heart},
+	{Seven, Heart},
+	{Eight, Heart},
+	{Nine, Heart},
+	{Ten, Heart},
 	{Jack, Heart },
 	{Queen, Heart },
 	{King, Heart },
@@ -75,7 +76,8 @@ int games = 0, fgam = 00, sgam = 00, tgam = 00, lgam = 00;
 int gwon = 0, fgwon = 0, sgwon = 0, tgwon = 0, lgwon = 0, quit = 0;
 int fwalet = 0000, swalet = 0000, twalet = 0000, lwalet = 0000, walet =0;
 string name, fnam = "AAA", snam = "AAA", tnam = "AAA", lnam = "AAA";
-ifstream playerRecord;
+ofstream outFile;
+ifstream inFile;
 
 #define DSIZE (sizeof(standardDeck) / sizeof(CARD))
 int DeckSize = DSIZE;
@@ -115,9 +117,9 @@ int main()
 		{
 		case 'P':
 			//Begin the game
-			//beginGame();
-			shuffle();
-			cout << rankName[shoe[1]->rank] << " , " << shoe[1]->Suit << endl << shoe[2]->rank << endl << shoe[3]->rank << endl;
+			beginGame();
+			//shuffle();
+			//cout << rankName[shoe[1]->rank] << " , " << shoe[1]->Suit << endl << shoe[2]->rank << endl << shoe[3]->rank << endl;
 			break;
 		case 'L':
 			//Display the leaderboard
@@ -138,20 +140,34 @@ void beginGame()
 {
 	char ans;
 	bool game = true;
-	cout << "To start a New game press N \n or to load a game press L, \n Press Q to quit or H for help.";
+	cout << "To start a New game press N\n or to load a game press L,\n Press Q to quit or H for help.";
 	cin >> ans;
 	ans = toupper(ans);
 	while (game)
 	{
-		while (ans != 'N' || ans != 'L' || ans != 'H' || ans != 'Q')
-		{
+		
 			switch (ans)
 			{
 			case 'N':
 				//Starts a new player profile accepting name and setting wallet amount to 1000.
+				cout << "What is your name?";
+				cin >> name;
+				for (int i = 0; i < name.size(); i++) {
+					name.at(i) = toupper(name.at(i));
+				}
+				walet = 1000;
+				saveGame();
+				playGame();
 				break;
 			case 'L':
 				//Loads a player profile from saved .txt file and reads in wallet amount
+				cout << "What is your name?";
+				cin >> name;
+				for (int i = 0; i < name.size(); i++) {
+					name.at(i) = toupper(name.at(i));
+				}
+				loadGame();
+				playGame();
 				break;
 			case 'H':
 				showHelp();
@@ -166,7 +182,7 @@ void beginGame()
 					<< "Please enter your choice.";
 				cin >> ans;
 			}
-		}
+		
 	}
 }
 void showLeaderboard()
@@ -277,9 +293,6 @@ void showHelp()
 }		
 
 
-
-
-
 void deckCreation() {
 	for (int ind = 0; ind < DeckSize; ind++){
 		shoe[ind] = &standardDeck[ind];
@@ -288,6 +301,7 @@ void deckCreation() {
 
 void shuffle() {
 	deckCreation();
+	srand(time(NULL));
 	for (int n = DeckSize-1; n > 0; --n) {
 		int r = rand() % n;
 
@@ -298,3 +312,53 @@ void shuffle() {
 
 } 
 
+void saveGame() {
+	ofstream outFile("PlayerRecord.txt");
+	outFile << name << " " << games << " " << gwon << " " << walet << endl;
+	outFile.close();
+}
+
+void loadGame() {
+	ifstream inFile("PlayerRecord.txt");
+	inFile >> name >> games >> gwon >> walet;
+	inFile.close();
+}
+
+void playGame() {
+	clearScreen();
+	int hand, handTotal, dealer, dealerTotal;
+	string dHand[10];
+	string pHand[10];
+	shuffle();
+	pHand[0] = rankName[shoe[0]->rank];
+	pHand[1] = shoe[0]->Suit;
+	dHand[0] = rankName[shoe[1]->rank];
+	dHand[1] = shoe[1]->Suit;
+	pHand[2] = rankName[shoe[2]->rank];
+	pHand[3] = shoe[2]->Suit;
+	dHand[2] = rankName[shoe[3]->rank];
+	dHand[3] = shoe[3]->Suit;
+	
+	handTotal = shoe[0]->rank + shoe[2]->rank;
+	/*if (shoe[0]->rank == 11 || shoe[0]->rank == 12 || shoe[0]->rank == 13) {
+		pHand[0] = 10;
+		if (shoe[0]->rank == 14) {
+			pHand[0] = 11;
+		}
+	} 
+	handTotal = pHand[0] + pHand[1];
+	*/
+
+
+	cout << "*************************************\n"
+		<< "**            DEALER               **\n"
+		<< "**                                 **\n"
+		<< "**    " << dHand[0] << dHand[1] << "  " << dHand[2] << dHand[3] << "                       **\n"
+		<< "**                                 **\n"
+		<< "**                                 **\n"
+		<< "**       " << "Current Total: " << handTotal << "         **\n"
+		<< "**    " << pHand[0] << pHand[1] << "  " << pHand[2] << pHand[3] << "                       **\n"
+		<< "**                                 **\n"
+		<< "**            " << name <<"                 **\n"
+		<< "*************************************\n";
+}
