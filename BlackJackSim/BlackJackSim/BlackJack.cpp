@@ -11,7 +11,8 @@ const char* Heart = "H";
 const char* Club = "C";
 const char* Diamond = "D";
 const char* Spade = "S";
-
+string dHand[10];
+string pHand[10];
 const char* rankName[] = {
 "","A","2","3","4","5","6","7","8","9","10","J","Q","K","A"
 };
@@ -74,7 +75,8 @@ CARD standardDeck[] = {
 
 int games = 0, fgam = 00, sgam = 00, tgam = 00, lgam = 00;
 int gwon = 0, fgwon = 0, sgwon = 0, tgwon = 0, lgwon = 0, quit = 0;
-int fwalet = 0000, swalet = 0000, twalet = 0000, lwalet = 0000, walet =0;
+int fwalet = 0000, swalet = 0000, twalet = 0000, lwalet = 0000, walet =0, bet =0, currentBet, tempWalet;
+int hand, handTotal, dealer, dealerTotal, cardCount =2;
 string name, fnam = "AAA", snam = "AAA", tnam = "AAA", lnam = "AAA";
 ofstream outFile;
 ifstream inFile;
@@ -89,8 +91,8 @@ CARD* shoe[DSIZE];
 
 int main()
 {
-	bool play = true;
-	while (play)
+	bool start = true;
+	while (start)
 	{
 		char Ans;
 		cout << "     2222222                          1111111\n"
@@ -130,7 +132,7 @@ int main()
 			showHelp();
 			break;
 		case 'Q':
-			play = false;
+			start = false;
 			//Quit the Program
 			break;
 		}
@@ -157,17 +159,10 @@ void beginGame()
 				}
 				walet = 1000;
 				saveGame();
-				playGame();
 				break;
 			case 'L':
 				//Loads a player profile from saved .txt file and reads in wallet amount
-				cout << "What is your name?";
-				cin >> name;
-				for (int i = 0; i < name.size(); i++) {
-					name.at(i) = toupper(name.at(i));
-				}
 				loadGame();
-				playGame();
 				break;
 			case 'H':
 				showHelp();
@@ -175,6 +170,7 @@ void beginGame()
 			case 'Q':
 				//quits to main menu.
 				game = false;
+				saveGame();
 				break;
 			default:
 				while (ans != 'N' && ans != 'L' && ans != 'H' && ans != 'Q')
@@ -182,7 +178,8 @@ void beginGame()
 					<< "Please enter your choice.";
 				cin >> ans;
 			}
-		
+			if (ans == 'N' || ans == 'L')
+				playGame();
 	}
 }
 void showLeaderboard()
@@ -205,8 +202,6 @@ void showLeaderboard()
 void updateLeaderboard() 
 {
 	 // Accepts your initials then moves your score up to the proper position, pushing down other scores if you beat them. 
-		cout << "What are your Initials?";
-		cin >> name;
 		if (gwon > lgwon)
 		{
 
@@ -312,53 +307,128 @@ void shuffle() {
 
 } 
 
-void saveGame() {
+void saveGame() { //writes a player to the player record
 	ofstream outFile("PlayerRecord.txt");
 	outFile << name << " " << games << " " << gwon << " " << walet << endl;
 	outFile.close();
 }
 
-void loadGame() {
+void loadGame() { //Reads in the player saved to the player record 
 	ifstream inFile("PlayerRecord.txt");
 	inFile >> name >> games >> gwon >> walet;
 	inFile.close();
 }
 
-void playGame() {
-	clearScreen();
-	int hand, handTotal, dealer, dealerTotal;
-	string dHand[10];
-	string pHand[10];
-	shuffle();
-	pHand[0] = rankName[shoe[0]->rank];
-	pHand[1] = shoe[0]->Suit;
-	dHand[0] = rankName[shoe[1]->rank];
-	dHand[1] = shoe[1]->Suit;
-	pHand[2] = rankName[shoe[2]->rank];
-	pHand[3] = shoe[2]->Suit;
-	dHand[2] = rankName[shoe[3]->rank];
-	dHand[3] = shoe[3]->Suit;
-	
-	handTotal = shoe[0]->rank + shoe[2]->rank;
-	/*if (shoe[0]->rank == 11 || shoe[0]->rank == 12 || shoe[0]->rank == 13) {
-		pHand[0] = 10;
-		if (shoe[0]->rank == 14) {
-			pHand[0] = 11;
+int getCardValue(int value) {
+	if (value >= 11 && value <= 13) {
+		return 10;
+	}
+	else if (value == 14) {
+			return 11;
 		}
-	} 
-	handTotal = pHand[0] + pHand[1];
-	*/
+	return value;
+	}
 
-
-	cout << "*************************************\n"
-		<< "**            DEALER               **\n"
-		<< "**                                 **\n"
-		<< "**    " << dHand[0] << dHand[1] << "  " << dHand[2] << dHand[3] << "                       **\n"
-		<< "**                                 **\n"
-		<< "**                                 **\n"
-		<< "**       " << "Current Total: " << handTotal << "         **\n"
-		<< "**    " << pHand[0] << pHand[1] << "  " << pHand[2] << pHand[3] << "                       **\n"
-		<< "**                                 **\n"
-		<< "**            " << name <<"                 **\n"
-		<< "*************************************\n";
+int betting(int value) {
+	if (value > 0 && value <= walet) {
+	tempWalet = walet -value;
+		return currentBet;
+	}
+	else if (value == 0 || value > walet) {
+		cout << "Please enter a valid bet between 1 and " << walet;
+	}
+	return value;
 }
+
+void playGame() {
+
+	bool play = true;
+	while (play) {
+		//clearScreen();
+		
+
+		shuffle();
+		pHand[0] = rankName[shoe[0]->rank];
+		pHand[1] = shoe[0]->Suit;
+		dHand[0] = rankName[shoe[1]->rank];
+		dHand[1] = shoe[1]->Suit;
+		pHand[2] = rankName[shoe[2]->rank];
+		pHand[3] = shoe[2]->Suit;
+		dHand[2] = rankName[shoe[3]->rank];
+		dHand[3] = shoe[3]->Suit;
+
+		handTotal = getCardValue(shoe[0]->rank) + getCardValue(shoe[2]->rank);
+		dealerTotal = getCardValue(shoe[1]->rank) + getCardValue(shoe[3]->rank);
+		cout << "You currently have $" << walet << "how much would you like to bet?";
+		cin >> bet;
+		betting(bet);
+
+		cout << "*************************************\n"
+			<< "**            DEALER               **\n"
+			<< "**       " << "Current Total: " << setw(2) << dealerTotal << "         **\n"
+			<< "**    " << dHand[0] << dHand[1] << "  " << dHand[2] << dHand[3] << "                       **\n"
+			<< "**                                 **\n"
+			<< "**                                 **\n"
+			<< "**                                 **\n"
+			<< "**    " << pHand[0] << pHand[1] << "  " << pHand[2] << pHand[3] << "                       **\n"
+			<< "**    " << "Current Total: " << setw(2) << handTotal << "   Current Bet: " << currentBet <<"   **\n"
+			<< "**            " << name << "                 **\n"
+			<< "*************************************\n";
+		playRound();
+	}
+}
+
+void playRound() {
+	char choice;
+	if (dealerTotal == 21 && handTotal != 21) {
+		endGame(tempWalet);
+	}
+	else if (handTotal > 22)
+	{
+		endGame(tempWalet);
+	}
+	else if (handTotal == 21) {
+		endGame(currentBet);
+	}
+	else {
+		cout << "What would you like to do?\n Press H to Hit, \nPress S to Stand, \nPress D to Double down, \n";
+		if (pHand[0] == pHand[1]) {
+			cout << "Press P to Split";
+		}
+		cin >> choice;
+		choice = toupper(choice);
+	}
+	switch (choice) {
+	case 'H':
+		cardCount++;
+	case 'S':
+	case 'D':
+		cardCount++;
+		//case 'P':
+
+	default:
+	}
+}
+
+void gameScreen() {
+
+}
+
+
+//int endGame(string) {
+//	string lose = 
+//		cout << "Sorry you have lost.";
+//		walet = tempWalet;
+//		return walet;
+//	}
+//	else if (handTotal == 21 && cardCount == 2) {
+//		cout << "You Win";
+//		walet =+ (currentBet * 1.5);
+//	}
+//	else if (handTotal > dealerTotal && dealerTotal > 17)
+//		{
+//		walet = currentBet;
+//		}
+//}
+//
+//
