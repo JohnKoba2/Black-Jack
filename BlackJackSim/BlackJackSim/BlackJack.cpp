@@ -12,7 +12,7 @@ const char* Club = "C";
 const char* Diamond = "D";
 const char* Spade = "S";
 string dHand[10];
-string pHand[10];
+string pHand[20];
 const char* rankName[] = {
 "","A","2","3","4","5","6","7","8","9","10","J","Q","K","A"
 };
@@ -363,55 +363,56 @@ void playGame() {
 		cin >> bet;
 		betting(bet);
 
-		cout << "*************************************\n"
-			<< "**            DEALER               **\n"
-			<< "**       " << "Current Total: " << setw(2) << dealerTotal << "         **\n"
-			<< "**    " << dHand[0] << dHand[1] << "  " << dHand[2] << dHand[3] << "                       **\n"
-			<< "**                                 **\n"
-			<< "**                                 **\n"
-			<< "**                                 **\n"
-			<< "**    " << pHand[0] << pHand[1] << "  " << pHand[2] << pHand[3] << "                       **\n"
-			<< "**    " << "Current Total: " << setw(2) << handTotal << "   Current Bet: " << currentBet <<"   **\n"
-			<< "**            " << name << "                 **\n"
-			<< "*************************************\n";
-		playRound();
+
+		//playRound();
 	}
 }
-
-void playRound() {
-	char choice;
-	if (dealerTotal == 21 && handTotal != 21) {
-		endGame(tempWalet);
-	}
-	else if (handTotal > 22)
-	{
-		endGame(tempWalet);
-	}
-	else if (handTotal == 21) {
-		endGame(currentBet);
-	}
-	else {
-		cout << "What would you like to do?\n Press H to Hit, \nPress S to Stand, \nPress D to Double down, \n";
-		if (pHand[0] == pHand[1]) {
-			cout << "Press P to Split";
-		}
-		cin >> choice;
-		choice = toupper(choice);
-	}
-	switch (choice) {
-	case 'H':
-		cardCount++;
-	case 'S':
-	case 'D':
-		cardCount++;
-		//case 'P':
-
-	default:
-	}
-}
+//
+//void playRound() {
+//	char choice;
+//	if (dealerTotal == 21 && handTotal != 21) {
+//		endGame(tempWalet);
+//	}
+//	else if (handTotal > 22)
+//	{
+//		endGame(tempWalet);
+//	}
+//	else if (handTotal == 21) {
+//		endGame(currentBet);
+//	}
+//	else {
+//		cout << "What would you like to do?\n Press H to Hit, \nPress S to Stand, \nPress D to Double down, \n";
+//		if (pHand[0] == pHand[1]) {
+//			cout << "Press P to Split";
+//		}
+//		cin >> choice;
+//		choice = toupper(choice);
+//	}
+//	switch (choice) {
+//	case 'H':
+//		cardCount++;
+//	case 'S':
+//	case 'D':
+//		cardCount++;
+//		//case 'P':
+//
+//	default:
+//	}
+//}
+//
 
 void gameScreen() {
-
+		cout << "*************************************\n"
+<< "**            DEALER               **\n"
+<< "**       " << "Current Total: " << setw(2) << dealerTotal << "         **\n"
+<< "**       " << dHand[0] << dHand[1] << "  " << dHand[2] << dHand[3] << "    " << dHand[4] << dHand[5] << "  " << dHand[6] << dHand[7] << "   " << dHand[8] << dHand[9] << "                **\n"
+<< "**                                 **\n"
+<< "**                                 **\n"
+<< "**                                 **\n"
+<< "**    " << pHand[0] << pHand[1] << "  " << pHand[2] << pHand[3] << "   " << pHand[4] << pHand[5] << "    " << pHand[6] << pHand[7] << "  " << pHand[8] << pHand[9] << "   " << pHand[10] << pHand[11] << "  " << pHand[12] << pHand[13] << "  " << pHand[14] << pHand[15] << "   " << pHand[16] << pHand[17] << "   " << pHand[18] << pHand[19] << "          **\n"
+<< "**    " << "Current Total: " << setw(2) << handTotal << "   Current Bet: " << currentBet << "   **\n"
+<< "**            " << name << "                 **\n"
+<< "*************************************\n";
 }
 
 
