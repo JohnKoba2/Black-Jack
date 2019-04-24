@@ -46,5 +46,10 @@ void beginGame();
 void saveGame();
 void loadGame();
 void playGame();
-
+void playerDraw();
+void dealerDraw();
+void gameScreen();
+int gameLost(int walet);
+void gameWin();
+void playRound();
 #endif //PCH_H

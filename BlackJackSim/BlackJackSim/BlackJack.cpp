@@ -13,6 +13,7 @@ const char* Diamond = "D";
 const char* Spade = "S";
 string dHand[10];
 string pHand[20];
+string dTemp[2];
 const char* rankName[] = {
 "","A","2","3","4","5","6","7","8","9","10","J","Q","K","A"
 };
@@ -76,11 +77,11 @@ CARD standardDeck[] = {
 int games = 0, fgam = 00, sgam = 00, tgam = 00, lgam = 00;
 int gwon = 0, fgwon = 0, sgwon = 0, tgwon = 0, lgwon = 0, quit = 0;
 int fwalet = 0000, swalet = 0000, twalet = 0000, lwalet = 0000, walet =0, bet =0, currentBet, tempWalet;
-int hand, handTotal, dealer, dealerTotal, cardCount =2;
+int hand, handTotal=0, dealer, dealerTotal, cardCount = 0, dI = 0, ph = 0, dh = 0; 
 string name, fnam = "AAA", snam = "AAA", tnam = "AAA", lnam = "AAA";
 ofstream outFile;
 ifstream inFile;
-
+char choice;
 #define DSIZE (sizeof(standardDeck) / sizeof(CARD))
 int DeckSize = DSIZE;
 CARD* shoe[DSIZE];
@@ -348,88 +349,124 @@ void playGame() {
 		
 
 		shuffle();
-		pHand[0] = rankName[shoe[0]->rank];
-		pHand[1] = shoe[0]->Suit;
-		dHand[0] = rankName[shoe[1]->rank];
-		dHand[1] = shoe[1]->Suit;
-		pHand[2] = rankName[shoe[2]->rank];
-		pHand[3] = shoe[2]->Suit;
-		dHand[2] = rankName[shoe[3]->rank];
-		dHand[3] = shoe[3]->Suit;
+		playerDraw();
+		dealerDraw();
+		playerDraw();
+	
+		for (int i = 0; i <= cardCount; i += 2) {
+			handTotal += getCardValue(shoe[i]->rank);
+		}
 
-		handTotal = getCardValue(shoe[0]->rank) + getCardValue(shoe[2]->rank);
+		//handTotal = getCardValue(shoe[0]->rank) + getCardValue(shoe[2]->rank);
 		dealerTotal = getCardValue(shoe[1]->rank) + getCardValue(shoe[3]->rank);
-		cout << "You currently have $" << walet << "how much would you like to bet?";
+		cout << "You currently have $" << walet << " how much would you like to bet?";
 		cin >> bet;
 		betting(bet);
+		gameScreen();
 
-
-		//playRound();
+		playRound();
 	}
 }
-//
-//void playRound() {
-//	char choice;
-//	if (dealerTotal == 21 && handTotal != 21) {
-//		endGame(tempWalet);
-//	}
-//	else if (handTotal > 22)
-//	{
-//		endGame(tempWalet);
-//	}
-//	else if (handTotal == 21) {
-//		endGame(currentBet);
-//	}
-//	else {
-//		cout << "What would you like to do?\n Press H to Hit, \nPress S to Stand, \nPress D to Double down, \n";
-//		if (pHand[0] == pHand[1]) {
-//			cout << "Press P to Split";
-//		}
-//		cin >> choice;
-//		choice = toupper(choice);
-//	}
-//	switch (choice) {
-//	case 'H':
-//		cardCount++;
-//	case 'S':
-//	case 'D':
-//		cardCount++;
-//		//case 'P':
-//
-//	default:
-//	}
-//}
-//
+
+void playRound() {
+	while (handTotal < 21 && choice != 'S') {
+		if (dealerTotal == 21 && handTotal != 21) {
+			gameLost(walet);
+		}
+		else if (handTotal > 22)
+		{
+			gameLost(walet);
+		}
+		else if (handTotal == 21) {
+			gameWin();
+		}
+		else {
+			cout << "What would you like to do?\n Press H to Hit, \nPress S to Stand, \nPress D to Double down, \n";
+			if (pHand[0] == pHand[1]) {
+				cout << "Press P to Split";
+			}
+			cin >> choice;
+			choice = toupper(choice);
+		}
+		switch (choice) {
+		case 'H':
+			playerDraw();
+		case 'S':
+		case 'D':
+			currentBet = currentBet * 2;
+			playerDraw();
+			//	if (pHand[0] == pHand[2]) {
+			//case 'P': 
+			//	}
+		default:
+			cout << "Please enter H, S, or D";
+		}
+		clearScreen();
+		gameScreen();
+	}
+}
 
 void gameScreen() {
 		cout << "*************************************\n"
-<< "**            DEALER               **\n"
-<< "**       " << "Current Total: " << setw(2) << dealerTotal << "         **\n"
-<< "**       " << dHand[0] << dHand[1] << "  " << dHand[2] << dHand[3] << "    " << dHand[4] << dHand[5] << "  " << dHand[6] << dHand[7] << "   " << dHand[8] << dHand[9] << "                **\n"
-<< "**                                 **\n"
-<< "**                                 **\n"
-<< "**                                 **\n"
-<< "**    " << pHand[0] << pHand[1] << "  " << pHand[2] << pHand[3] << "   " << pHand[4] << pHand[5] << "    " << pHand[6] << pHand[7] << "  " << pHand[8] << pHand[9] << "   " << pHand[10] << pHand[11] << "  " << pHand[12] << pHand[13] << "  " << pHand[14] << pHand[15] << "   " << pHand[16] << pHand[17] << "   " << pHand[18] << pHand[19] << "          **\n"
+<< "**            DEALER                 \n"
+<< "**                                   \n"
+<< "**       " << dHand[0] << dHand[1] << "  " << dHand[2] << dHand[3] << "    " << dHand[4] << dHand[5] << "  " << dHand[6] << dHand[7] << "   " << dHand[8] << dHand[9] << "                \n"
+<< "**                                   \n"
+<< "**                                 \n"
+<< "**                                 \n"
+<< "**    " << pHand[0] << pHand[1] << "  " << pHand[2] << pHand[3] << "   " << pHand[4] << pHand[5] << "    " << pHand[6] << pHand[7] << "  " << pHand[8] << pHand[9] << "   " << pHand[10] << pHand[11] << "  " << pHand[12] << pHand[13] << "  " << pHand[14] << pHand[15] << "   " << pHand[16] << pHand[17] << "   " << pHand[18] << pHand[19] << "          \n"
 << "**    " << "Current Total: " << setw(2) << handTotal << "   Current Bet: " << currentBet << "   **\n"
-<< "**            " << name << "                 **\n"
+<< "**            " << name << "                 \n"
 << "*************************************\n";
 }
 
 
-//int endGame(string) {
-//	string lose = 
-//		cout << "Sorry you have lost.";
-//		walet = tempWalet;
-//		return walet;
-//	}
-//	else if (handTotal == 21 && cardCount == 2) {
-//		cout << "You Win";
-//		walet =+ (currentBet * 1.5);
-//	}
-//	else if (handTotal > dealerTotal && dealerTotal > 17)
-//		{
-//		walet = currentBet;
-//		}
-//}
-//
-//
+
+
+int gameLost(int walet) {
+	cout << "Sorry you have lost.";
+	walet = tempWalet;
+	return walet;
+}
+
+void gameWin() {
+	cout << "You Win";
+	if (handTotal == 21 && cardCount == 2) {
+		
+		walet =+(currentBet * 1.5);
+	}
+	else if (handTotal > dealerTotal && dealerTotal > 17)
+	{
+		walet = currentBet;
+	}
+}
+
+void playerDraw() {
+	
+	pHand[ph] = rankName[shoe[dI]->rank];
+	ph++;
+	pHand[ph] = shoe[dI]->Suit;
+	ph++;
+	dI++;
+	cardCount++;
+
+}
+
+void dealerDraw() {
+	
+	if (dh == 2) {
+		dTemp[dh] = rankName[shoe[dI]->rank];
+		dh++;
+		dTemp[dh] = shoe[dI]->Suit;
+		dh++;
+		dI++;
+	}
+	else {
+		dHand[dh] = rankName[shoe[dI]->rank];
+		dh++;
+		dHand[dh] = shoe[dI]->Suit;
+		dh++;
+		dI++;
+	}
+
+}
