@@ -181,7 +181,7 @@ void beginGame()
 }
 
 
-void clearScreen()
+void clearScreen() //prints 100 new lines to effectivly "clear" the screen
 {
 	int n;
 	for (n = 0; n < 10; n++)
@@ -190,7 +190,7 @@ void clearScreen()
 }
 
 void showHelp()
-{
+{// explains how the game works. 
 	clearScreen();
 	cout << "In 21 (also referred to as Black Jack) your job is to beat the dealer. To do that you begin the game\n"
 		<< "each being dealt 2 cards, your cards are face up so you can see and one of the dealers card is face up. \n"
@@ -210,13 +210,13 @@ void showHelp()
 }		
 
 
-void deckCreation() {
+void deckCreation() { //takes the cards from the standard decklist and puts them into a shoe
 	for (int ind = 0; ind < DeckSize; ind++){
 		shoe[ind] = &standardDeck[ind];
 	}
 }
 
-void shuffle() {
+void shuffle() { //shuffles the card shoe to randomize for playing the  game
 	deckCreation();
 	srand(time(NULL));
 	for (int n = DeckSize-1; n > 0; --n) {
@@ -241,13 +241,17 @@ void loadGame() { //Reads in the player saved to the player record
 	inFile.close();
 }
 
-int getCardValue(int value) {
+int getCardValue(int value) { //checks the card values and prints a value of 10 for KQJ
 	if (value >= 11 && value <= 13) {
 		return 10;
 	}
-	else if (value == 14) {
-			return 11;
+	else if (value == 14) { //if the card value is an A check to see if hand is higher than 10 if not the value is 11 if it is the value is 1
+		if (value == 14 && handTotal > 10) {
+			return 1;
 		}
+		return 11;
+	}
+	
 	return value;
 	}
 
@@ -259,7 +263,7 @@ int betting(int value) {
 	else if (value == 0 || value > walet) {
 		cout << "Please enter a valid bet between 1 and " << walet;
 	}
-	return value;
+	return currentBet;
 }
 
 void playGame() {
@@ -280,6 +284,7 @@ void playGame() {
 void playRound() {
 
 	while (choice != 'S') {
+		getHandTotal(hand);
 		if (dealerTotal == 21 && handTotal != 21) 
 		{
 			gameLost(walet);
@@ -319,6 +324,20 @@ void playRound() {
 		}
 		clearScreen();
 		gameScreen();
+	}
+	if (choice == 'S') {
+		dHand[2] == dTemp[0];
+		dHand[3] == dTemp[1];
+		getDealerTotal();
+	
+		while (dealerTotal < 18 && dealerTotal < handTotal) {
+			clearScreen();
+			dealerDraw();
+			gameScreen();
+			if (dealerTotal > handTotal) {
+				gameLost(walet);
+			}
+		}
 	}
 }
 
@@ -371,9 +390,9 @@ void playerDraw() {
 void dealerDraw() {
 	
 	if (dh == 2) {
-		dTemp[dh] = rankName[shoe[dI]->rank];
+		dTemp[0] = rankName[shoe[dI]->rank];
 		dh++;
-		dTemp[dh] = shoe[dI]->Suit;
+		dTemp[1] = shoe[dI]->Suit;
 		dh++;
 		dI++;
 	}

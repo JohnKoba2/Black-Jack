@@ -2,6 +2,5 @@
   BlackJack.cpp
 d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(154): warning C4018: '<': signed/unsigned mismatch
 d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(221): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(352): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(399): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-  BlackJackSim.vcxproj -> D:\Documents\GitHub\Black-Jack\BlackJackSim\Debug\BlackJackSim.exe
+d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(331): error C3861: 'getDealerTotal': identifier not found
+d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(371): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
