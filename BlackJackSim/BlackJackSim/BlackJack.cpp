@@ -75,11 +75,12 @@ CARD standardDeck[] = {
 	{Ace, Spade },
 };
 
-int games = 0, fgam = 00, sgam = 00, tgam = 00, lgam = 00;
-int gwon = 0, fgwon = 0, sgwon = 0, tgwon = 0, lgwon = 0, quit = 0;
-int fwalet = 0000, swalet = 0000, twalet = 0000, lwalet = 0000, walet =0, bet =0, currentBet, tempWalet;
-int hand, handTotal=0, dealer, dealerTotal, cardCount = 0, dI = 0, ph = 0, dh = 0; 
-string name, fnam = "AAA", snam = "AAA", tnam = "AAA", lnam = "AAA";
+int games = 0;
+int gwon = 0, quit = 0;
+int walet =0, bet =0, currentBet, tempWalet;
+int hand, handTotal = 0, dealer, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, dI = 0, ph = 0, dh = 0;
+bool game = true;
+string name;
 ofstream outFile;
 ifstream inFile;
 char choice;
@@ -138,7 +139,7 @@ int main()
 void beginGame()
 {
 	char ans;
-	bool game = true;
+	
 	cout << "To start a New game press N\n or to load a game press L,\n Press Q to quit or H for help.";
 	cin >> ans;
 	ans = toupper(ans);
@@ -258,6 +259,7 @@ int getCardValue(int value) { //checks the card values and prints a value of 10 
 int betting(int value) {
 	if (value > 0 && value <= walet) {
 	tempWalet = walet -value;
+	currentBet = value;
 		return currentBet;
 	}
 	else if (value == 0 || value > walet) {
@@ -275,7 +277,6 @@ void playGame() {
 		cin >> bet;
 		betting(bet);
 		startGame();
-		getHandTotal(hand);
 		gameScreen();
 		playRound();
 	}
@@ -284,7 +285,6 @@ void playGame() {
 void playRound() {
 
 	while (choice != 'S') {
-		getHandTotal(hand);
 		if (dealerTotal == 21 && handTotal != 21) 
 		{
 			gameLost(walet);
@@ -326,15 +326,16 @@ void playRound() {
 		gameScreen();
 	}
 	if (choice == 'S') {
-		dHand[2] == dTemp[0];
-		dHand[3] == dTemp[1];
-		getDealerTotal();
+		dHand[2] = dTemp[0];
+		dHand[3] = dTemp[1];
+
+		dealerTotal += dealTempTotal;
 	
 		while (dealerTotal < 18 && dealerTotal < handTotal) {
 			clearScreen();
 			dealerDraw();
 			gameScreen();
-			if (dealerTotal > handTotal) {
+			if (dealerTotal > handTotal && dealerTotal <= 21) {
 				gameLost(walet);
 			}
 		}
@@ -344,13 +345,13 @@ void playRound() {
 void gameScreen() {
 		cout << "*************************************\n"
 << "**            DEALER                 \n"
-<< "**                                   \n"
+<< "**       Dealer Total: "<<  dealerTotal <<"                           \n"
 << "**       " << dHand[0] << dHand[1] << "  " << dHand[2] << dHand[3] << "    " << dHand[4] << dHand[5] << "  " << dHand[6] << dHand[7] << "   " << dHand[8] << dHand[9] << "                \n"
 << "**                                   \n"
 << "**                                 \n"
 << "**    " << pSHand[0] << pSHand[1] << "  " << pSHand[2] << pSHand[3] << "   " << pSHand[4] << pSHand[5] << "    " << pSHand[6] << pSHand[7] << "  " << pSHand[8] << pSHand[9] <<"     \n"
 << "**    " << pHand[0] << pHand[1] << "  " << pHand[2] << pHand[3] << "   " << pHand[4] << pHand[5] << "    " << pHand[6] << pHand[7] << "  " << pHand[8] << pHand[9] << "       \n"
-<< "**    " << "Current Total: " << setw(2) << handTotal << "   Current Bet: " << currentBet << "   **\n"
+<< "**    " << "Current Total: " << setw(2) << handTotal << "   Current Bet: " << currentBet << "   \n"
 << "**            " << name << "                 \n"
 << "*************************************\n";
 }
@@ -361,6 +362,8 @@ void gameScreen() {
 int gameLost(int walet) {
 	cout << "Sorry you have lost.";
 	walet = tempWalet;
+	clearRound();
+	playAgain();
 	return walet;
 }
 
@@ -374,11 +377,14 @@ void gameWin() {
 	{
 		walet = currentBet;
 	}
+	clearRound();
+	playAgain();
 }
 
 void playerDraw() {
 	
 	pHand[ph] = rankName[shoe[dI]->rank];
+	handTotal += getCardValue(shoe[dI]->rank);
 	ph++;
 	pHand[ph] = shoe[dI]->Suit;
 	ph++;
@@ -391,6 +397,7 @@ void dealerDraw() {
 	
 	if (dh == 2) {
 		dTemp[0] = rankName[shoe[dI]->rank];
+		dealTempTotal += getCardValue(shoe[dI]->rank);
 		dh++;
 		dTemp[1] = shoe[dI]->Suit;
 		dh++;
@@ -398,6 +405,7 @@ void dealerDraw() {
 	}
 	else {
 		dHand[dh] = rankName[shoe[dI]->rank];
+		dealerTotal += getCardValue(shoe[dI]->rank) + dealTempTotal;
 		dh++;
 		dHand[dh] = shoe[dI]->Suit;
 		dh++;
@@ -427,3 +435,34 @@ void startGame() {
 //		dealerTotal += getCardValue(stoi(dHand[i * 2]));
 //	}
 //}
+
+void clearRound() {
+	dI = 0, ph = 0, dh = 0, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, tempWalet = 0, handTotal=0;
+	pHand[0] = "", pHand[1] = "", pHand[2] = "", pHand[3] = "", pHand[4] = "", pHand[5] = "", pHand[6] = "", pHand[7] = "", pHand[8] = "", pHand[9] = "";
+	pSHand[0] = "", pSHand[1] = "", pSHand[2] = "", pSHand[3] = "", pSHand[4] = "", pSHand[5] = "", pSHand[6] = "", pSHand[7] = "", pSHand[8] = "", pSHand[9] = "";
+	dHand[0] = "", dHand[1] = "", dHand[2] = "", dHand[3] = "", dHand[4] = "", dHand[5] = "", dHand[6] = "", dHand[7] = "", dHand[8] = "", dHand[9] = "",
+	shuffle();
+}
+
+void playAgain() {
+	cout << "Would you like to play again? Y/N";
+	cin >> choice;
+	choice = toupper(choice);
+	while (game)
+	{
+
+		switch (choice)
+		{
+		case 'Y':
+			break;
+		case 'N':
+		{
+			game = false;
+			break;
+		}
+		default: cout << "Please enter Y or N.";
+		}
+		break;
+	}
+
+}

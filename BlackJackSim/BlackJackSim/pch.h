@@ -52,5 +52,6 @@ int gameLost(int walet);
 void gameWin();
 void playRound();
 void startGame();
-int getHandTotal(int handTotal);
+void clearRound();
+void playAgain();
 #endif //PCH_H
