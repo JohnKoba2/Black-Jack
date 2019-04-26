@@ -79,7 +79,7 @@ int games = 0;
 int gwon = 0, quit = 0;
 int walet =0, bet =0, currentBet, tempWalet;
 int hand, handTotal = 0, dealer, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, dI = 0, ph = 0, dh = 0;
-bool game = true;
+bool game = true, play = true;
 string name;
 ofstream outFile;
 ifstream inFile;
@@ -113,7 +113,6 @@ int main()
 			<< "2222222222222222222222         1111111111111111111111111\n"
 			<< endl << endl << endl << endl
 			<< "Press P to Play\n"
-			<< "Press L for Leaderboard\n"
 			<< "Press H for Help\n"
 			<< "Press Q to Quit.";
 
@@ -133,6 +132,8 @@ int main()
 			start = false;
 			//Quit the Program
 			break;
+		default:
+			cout << "Please enter P, H or Q! \n\n\n";
 		}
 	}
 }
@@ -157,10 +158,12 @@ void beginGame()
 				}
 				walet = 1000;
 				saveGame();
+				game = false;
 				break;
 			case 'L':
 				//Loads a player profile from saved .txt file and reads in wallet amount
 				loadGame();
+				game = false;
 				break;
 			case 'H':
 				showHelp();
@@ -171,14 +174,19 @@ void beginGame()
 				saveGame();
 				break;
 			default:
-				while (ans != 'N' && ans != 'L' && ans != 'H' && ans != 'Q')
+				while (ans != 'N' && ans != 'L' && ans != 'H' && ans != 'Q') {
 					cout << "Valid choices are only N,L,H or Q."
-					<< "Please enter your choice.";
-				cin >> ans;
+						<< "Please enter your choice.";
+					cin >> ans;
+					ans = toupper(ans);
+					
+				}
+				break;
 			}
-			if (ans == 'N' || ans == 'L')
-				playGame();
+	
 	}
+	if (ans == 'N' || ans == 'L')
+		playGame();
 }
 
 
@@ -207,7 +215,8 @@ void showHelp()
 		<< "Press P to Split. This is only allowed with doubles, you split the hand into 2 new hands placing a second bet for the second hand.\n"
 		<< "In the event of a split hands will be played right to left (clockwise). \n\n"
 		<< "Once you Stand the dealer will reveal their second card and hit or stand up until they reach 18 or bust. Then the higher hand will win the bet.\n"
-		<< "In the case of a tie, a push will occur and you will get your initial bet back. ";
+		<< "In the case of a tie, a push will occur and you will get your initial bet back. "
+		<< endl << endl << endl;
 }		
 
 
@@ -256,29 +265,38 @@ int getCardValue(int value) { //checks the card values and prints a value of 10 
 	return value;
 	}
 
-int betting(int value) {
-	if (value > 0 && value <= walet) {
-	tempWalet = walet -value;
-	currentBet = value;
-		return currentBet;
-	}
-	else if (value == 0 || value > walet) {
-		cout << "Please enter a valid bet between 1 and " << walet;
-	}
-	return currentBet;
+int betting(int bet) {
+	bool valid = true;
+		while (valid) {
+			if (bet > 0 && bet <= walet) {
+				tempWalet = walet - bet;
+				currentBet = bet;
+				return currentBet;
+			}
+			else if (bet == 0 || bet > walet) {
+				cout << "Please enter a valid bet between 1 and " << walet;
+				cout << "\n What is your bet?  ";
+				cin >> bet;
+				
+			}
+		
+		}
 }
 
 void playGame() {
 
-	bool play = true;
+	
 	while (play) {
 		clearScreen();
-		cout << "You currently have $" << walet << " how much would you like to bet?";
+		cout << "You currently have $" << walet << " how much would you like to bet?  ";
 		cin >> bet;
 		betting(bet);
 		startGame();
 		gameScreen();
 		playRound();
+		clearRound();
+		saveGame();
+		playAgain();
 	}
 }
 
@@ -287,12 +305,12 @@ void playRound() {
 	while (choice != 'S') {
 		if (dealerTotal == 21 && handTotal != 21) 
 		{
-			gameLost(walet);
+			gameLost(bet);
 			break;
 		}
-		else if (handTotal > 22)
+		else if (handTotal >= 22)
 		{
-			gameLost(walet);
+			gameLost(bet);
 			break;
 		}
 		else if (handTotal == 21) {
@@ -300,8 +318,11 @@ void playRound() {
 			break;
 		}
 		else {
-			cout << "What would you like to do?\n Press H to Hit, \nPress S to Stand, \nPress D to Double down";
-			if (pHand[0] == pHand[1]) {
+			cout << "What would you like to do?\n Press H to Hit \nPress S to Stand \n";
+				if (cardCount == 2) {
+					cout << "Press D to Double down";
+				}
+			if (pHand[0] == pHand[2]) {
 				cout << ", \nPress P to Split";
 			}
 			cin >> choice;
@@ -316,6 +337,7 @@ void playRound() {
 		case 'D':
 			currentBet = currentBet * 2;
 			playerDraw();
+			choice = 'S';
 			break;
 		case 'P': 
 				
@@ -328,17 +350,25 @@ void playRound() {
 	if (choice == 'S') {
 		dHand[2] = dTemp[0];
 		dHand[3] = dTemp[1];
-
 		dealerTotal += dealTempTotal;
+		gameScreen();
 	
-		while (dealerTotal < 18 && dealerTotal < handTotal) {
+		while (dealerTotal < handTotal -1 || dealerTotal < 18 ) {
 			clearScreen();
 			dealerDraw();
 			gameScreen();
-			if (dealerTotal > handTotal && dealerTotal <= 21) {
-				gameLost(walet);
-			}
 		}
+		if (dealerTotal > handTotal &&	dealerTotal <= 21) {
+			gameLost(bet);
+
+		}
+		else if (dealerTotal == handTotal) {
+			gameDraw();
+
+		}
+		else if (dealerTotal > 21 || dealerTotal < handTotal) {
+			gameWin();
+			}
 	}
 }
 
@@ -359,26 +389,26 @@ void gameScreen() {
 
 
 
-int gameLost(int walet) {
+int gameLost(int bet) {
 	cout << "Sorry you have lost.";
-	walet = tempWalet;
-	clearRound();
-	playAgain();
+	walet = walet - bet;
 	return walet;
 }
 
+void gameDraw() {
+	cout << "PUSH!!";
+}
+
 void gameWin() {
-	cout << "You Win";
+	cout << "You Win! \n";
 	if (handTotal == 21 && cardCount == 2) {
 		
-		walet +=(currentBet * 1.5);
+		walet +=currentBet * 1.5;
 	}
-	else if (handTotal > dealerTotal && dealerTotal > 17)
+	else 
 	{
-		walet = currentBet;
+		walet += currentBet;
 	}
-	clearRound();
-	playAgain();
 }
 
 void playerDraw() {
@@ -405,7 +435,7 @@ void dealerDraw() {
 	}
 	else {
 		dHand[dh] = rankName[shoe[dI]->rank];
-		dealerTotal += getCardValue(shoe[dI]->rank) + dealTempTotal;
+		dealerTotal += getCardValue(shoe[dI]->rank);
 		dh++;
 		dHand[dh] = shoe[dI]->Suit;
 		dh++;
@@ -419,6 +449,7 @@ void startGame() {
 	playerDraw();
 	dealerDraw();
 	playerDraw();
+	dealerDraw();
 }
 
 //int getHandTotal(int handTotal) {
@@ -457,7 +488,8 @@ void playAgain() {
 			break;
 		case 'N':
 		{
-			game = false;
+			play = false;
+		//	goto main();
 			break;
 		}
 		default: cout << "Please enter Y or N.";
@@ -466,3 +498,11 @@ void playAgain() {
 	}
 
 }
+
+class card {
+public:
+	string card;
+	string rank;
+	int value;
+
+};

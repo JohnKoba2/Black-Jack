@@ -54,4 +54,5 @@ void playRound();
 void startGame();
 void clearRound();
 void playAgain();
+void gameDraw();
 #endif //PCH_H
