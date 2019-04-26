@@ -12,7 +12,8 @@ const char* Club = "C";
 const char* Diamond = "D";
 const char* Spade = "S";
 string dHand[10];
-string pHand[20];
+string pHand[10];
+string pSHand[10];
 string dTemp[2];
 const char* rankName[] = {
 "","A","2","3","4","5","6","7","8","9","10","J","Q","K","A"
@@ -108,6 +109,7 @@ int main()
 			<< "  222222                                111111\n"
 			<< "2222222222222222222222         1111111111111111111111111\n"
 			<< "2222222222222222222222         1111111111111111111111111\n"
+			<< "2222222222222222222222         1111111111111111111111111\n"
 			<< endl << endl << endl << endl
 			<< "Press P to Play\n"
 			<< "Press L for Leaderboard\n"
@@ -121,12 +123,6 @@ int main()
 		case 'P':
 			//Begin the game
 			beginGame();
-			//shuffle();
-			//cout << rankName[shoe[1]->rank] << " , " << shoe[1]->Suit << endl << shoe[2]->rank << endl << shoe[3]->rank << endl;
-			break;
-		case 'L':
-			//Display the leaderboard
-			showLeaderboard();
 			break;
 		case 'H':
 			//Display Help Screen
@@ -183,81 +179,6 @@ void beginGame()
 				playGame();
 	}
 }
-void showLeaderboard()
-{
-	// Shows the leaderboard
-	cout << setprecision(7) << fixed;
-
-	cout << "**********************************************************************\n"
-		<< "**                          Leaderboard                              **\n"
-		<< "***********************************************************************\n"
-		<< "***  Rank  ***  Name  ***  Games Played  ***  Games Won  *** Money  ***\n"
-		<< "***  1st" << "\t" << fnam << "\t\t" << fgam << "\t" << fgwon << setw(7) << fwalet << "  ***\n"
-		<< "***  1st" << "\t" << snam << "\t\t" << sgam << "\t" << sgwon << setw(7) << swalet << "  ***\n"
-		<< "***  1st" << "\t" << tnam << "\t\t" << tgam << "\t" << tgwon << setw(7) << twalet << "  ***\n"
-		<< "***  1st" << "\t" << lnam << "\t\t" << lgam << "\t" << lgwon << setw(7) << lwalet << "  ***\n"
-		<< "****************************************************\n\n\n";
-	return;
-}
-
-void updateLeaderboard() 
-{
-	 // Accepts your initials then moves your score up to the proper position, pushing down other scores if you beat them. 
-		if (gwon > lgwon)
-		{
-
-			lnam = name;
-			lgam = games;
-			lgwon = gwon;
-			lwalet = walet;
-
-			if (gwon  > tgwon)
-			{
-				lnam = tnam;
-				lgam = tgam;
-				lgwon = tgwon;
-				lwalet = twalet;
-
-				tnam = name;
-				tgam = games;
-				tgwon = gwon;
-				twalet = walet;
-
-				if (gwon > sgwon)
-				{
-
-					tnam = snam;
-					tgwon = sgwon;
-					tgam = sgam;
-					twalet = swalet;
-
-					snam = name;
-					sgam = games;
-					sgwon = gwon;
-					swalet = walet;
-
-					if (gwon > fgwon)
-					{
-
-						snam = fnam;
-						sgam = fgam;
-						sgwon = fgwon;
-						swalet = fwalet;
-
-						fnam = name;
-						fgam = games;
-						fgwon = gwon;
-						fwalet = walet;
-					}
-				}
-			}
-		}
-		else
-			cout << "Sorry you didnt score high enough to make it on the Leaderboard. ";
-		showLeaderboard();
-			return;
-	
-	}
 
 
 void clearScreen()
@@ -345,45 +266,38 @@ void playGame() {
 
 	bool play = true;
 	while (play) {
-		//clearScreen();
-		
-
-		shuffle();
-		playerDraw();
-		dealerDraw();
-		playerDraw();
-	
-		for (int i = 0; i <= cardCount; i += 2) {
-			handTotal += getCardValue(shoe[i]->rank);
-		}
-
-		//handTotal = getCardValue(shoe[0]->rank) + getCardValue(shoe[2]->rank);
-		dealerTotal = getCardValue(shoe[1]->rank) + getCardValue(shoe[3]->rank);
+		clearScreen();
 		cout << "You currently have $" << walet << " how much would you like to bet?";
 		cin >> bet;
 		betting(bet);
+		startGame();
+		getHandTotal(hand);
 		gameScreen();
-
 		playRound();
 	}
 }
 
 void playRound() {
-	while (handTotal < 21 && choice != 'S') {
-		if (dealerTotal == 21 && handTotal != 21) {
+
+	while (choice != 'S') {
+		if (dealerTotal == 21 && handTotal != 21) 
+		{
 			gameLost(walet);
+			break;
 		}
 		else if (handTotal > 22)
 		{
 			gameLost(walet);
+			break;
 		}
 		else if (handTotal == 21) {
 			gameWin();
+			break;
 		}
 		else {
-			cout << "What would you like to do?\n Press H to Hit, \nPress S to Stand, \nPress D to Double down, \n";
+			cout << "What would you like to do?\n Press H to Hit, \nPress S to Stand, \nPress D to Double down";
 			if (pHand[0] == pHand[1]) {
-				cout << "Press P to Split";
+				cout << ", \nPress P to Split";
 			}
 			cin >> choice;
 			choice = toupper(choice);
@@ -391,13 +305,15 @@ void playRound() {
 		switch (choice) {
 		case 'H':
 			playerDraw();
+			break;
 		case 'S':
+			break;
 		case 'D':
 			currentBet = currentBet * 2;
 			playerDraw();
-			//	if (pHand[0] == pHand[2]) {
-			//case 'P': 
-			//	}
+			break;
+		case 'P': 
+				
 		default:
 			cout << "Please enter H, S, or D";
 		}
@@ -413,8 +329,8 @@ void gameScreen() {
 << "**       " << dHand[0] << dHand[1] << "  " << dHand[2] << dHand[3] << "    " << dHand[4] << dHand[5] << "  " << dHand[6] << dHand[7] << "   " << dHand[8] << dHand[9] << "                \n"
 << "**                                   \n"
 << "**                                 \n"
-<< "**                                 \n"
-<< "**    " << pHand[0] << pHand[1] << "  " << pHand[2] << pHand[3] << "   " << pHand[4] << pHand[5] << "    " << pHand[6] << pHand[7] << "  " << pHand[8] << pHand[9] << "   " << pHand[10] << pHand[11] << "  " << pHand[12] << pHand[13] << "  " << pHand[14] << pHand[15] << "   " << pHand[16] << pHand[17] << "   " << pHand[18] << pHand[19] << "          \n"
+<< "**    " << pSHand[0] << pSHand[1] << "  " << pSHand[2] << pSHand[3] << "   " << pSHand[4] << pSHand[5] << "    " << pSHand[6] << pSHand[7] << "  " << pSHand[8] << pSHand[9] <<"     \n"
+<< "**    " << pHand[0] << pHand[1] << "  " << pHand[2] << pHand[3] << "   " << pHand[4] << pHand[5] << "    " << pHand[6] << pHand[7] << "  " << pHand[8] << pHand[9] << "       \n"
 << "**    " << "Current Total: " << setw(2) << handTotal << "   Current Bet: " << currentBet << "   **\n"
 << "**            " << name << "                 \n"
 << "*************************************\n";
@@ -433,7 +349,7 @@ void gameWin() {
 	cout << "You Win";
 	if (handTotal == 21 && cardCount == 2) {
 		
-		walet =+(currentBet * 1.5);
+		walet +=(currentBet * 1.5);
 	}
 	else if (handTotal > dealerTotal && dealerTotal > 17)
 	{
@@ -470,3 +386,25 @@ void dealerDraw() {
 	}
 
 }
+
+void startGame() {
+	shuffle();
+	playerDraw();
+	dealerDraw();
+	playerDraw();
+}
+
+//int getHandTotal(int handTotal) {
+//	for (int i = 0; i <= cardCount; i++) {
+//		printf("%s %d\n", pHand[i * 2], i);
+//		handTotal += getCardValue(stoi(pHand[i*2]));
+//			
+//	}
+//	return handTotal;
+//}
+//
+//void getDealerTotal() {
+//	for (int i = 1; i <= cardCount; i++) {
+//		dealerTotal += getCardValue(stoi(dHand[i * 2]));
+//	}
+//}

@@ -39,7 +39,6 @@ typedef struct Card {
 
 
 void showHelp();
-void showLeaderboard();
 void clearScreen();
 void shuffle();
 void beginGame();
@@ -52,4 +51,6 @@ void gameScreen();
 int gameLost(int walet);
 void gameWin();
 void playRound();
+void startGame();
+int getHandTotal(int handTotal);
 #endif //PCH_H

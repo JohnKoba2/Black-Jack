@@ -1,6 +1,7 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (ConsoleApplication1.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿D:\Visual Studio\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (ConsoleApplication1.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   BlackJack.cpp
-c:\users\jkoba\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(158): warning C4018: '<': signed/unsigned mismatch
-c:\users\jkoba\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(300): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\jkoba\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(436): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-  BlackJackSim.vcxproj -> C:\Users\jkoba\Documents\GitHub\Black-Jack\BlackJackSim\Debug\BlackJackSim.exe
+d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(154): warning C4018: '<': signed/unsigned mismatch
+d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(221): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(352): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(399): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
+  BlackJackSim.vcxproj -> D:\Documents\GitHub\Black-Jack\BlackJackSim\Debug\BlackJackSim.exe
