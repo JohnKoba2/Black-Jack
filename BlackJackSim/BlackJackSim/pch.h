@@ -55,4 +55,5 @@ void startGame();
 void clearRound();
 void playAgain();
 void gameDraw();
+void pairSplit();
 #endif //PCH_H

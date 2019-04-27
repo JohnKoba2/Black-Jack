@@ -75,7 +75,7 @@ CARD standardDeck[] = {
 	{Ace, Spade },
 };
 
-int games = 0;
+int games = 0, psh;
 int gwon = 0, quit = 0;
 int walet =0, bet =0, currentBet, tempWalet;
 int hand, handTotal = 0, dealer, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, dI = 0, ph = 0, dh = 0;
@@ -340,7 +340,8 @@ void playRound() {
 			choice = 'S';
 			break;
 		case 'P': 
-				
+			pairSplit();
+			break;
 		default:
 			cout << "Please enter H, S, or D";
 		}
@@ -420,6 +421,18 @@ void playerDraw() {
 	ph++;
 	dI++;
 	cardCount++;
+
+}
+
+void playerSplitDraw() {
+
+	pHand[psh] = rankName[shoe[dI]->rank];
+	handTotal += getCardValue(shoe[dI]->rank);
+	psh++;
+	pHand[psh] = shoe[dI]->Suit;
+	psh++;
+	dI++;
+	
 
 }
 
@@ -506,3 +519,51 @@ public:
 	int value;
 
 };
+
+void pairSplit() {
+	pSHand[0] = pHand[2];
+	pSHand[1] = pHand[3];
+	pHand[2] = "";
+	pHand[3] = "";
+	ph = 2;
+	psh = 2;
+	cardCount--;
+	playerDraw();
+	playerSplitDraw();
+
+
+	cout << "What would you like to do with the first (Top) hand? \n H to Hit, S to Stay";
+	
+	while (choice != 'S') {
+		if (dealerTotal == 21 && handTotal != 21)
+		{
+			gameLost(bet);
+			break;
+		}
+		else if (handTotal >= 22)
+		{
+			gameLost(bet);
+			break;
+		}
+		else if (handTotal == 21) {
+			gameWin();
+			break;
+		}
+		else {
+			cout << "What would you like to do?\n Press H to Hit \nPress S to Stand \n";
+			cin >> choice;
+			choice = toupper(choice);
+		}
+		switch (choice) {
+		case 'H':
+			playerSplitDraw();
+			break;
+		case 'S':
+			break;
+		default:
+			cout << "Please enter H or S";
+		}
+		clearScreen();
+		gameScreen();
+	}
+}

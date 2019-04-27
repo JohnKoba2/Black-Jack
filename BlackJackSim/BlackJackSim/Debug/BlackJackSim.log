@@ -2,6 +2,6 @@
   BlackJack.cpp
 d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(156): warning C4018: '<': signed/unsigned mismatch
 d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(231): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(406): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(407): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
 d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(284): warning C4715: 'betting': not all control paths return a value
   BlackJackSim.vcxproj -> D:\Documents\GitHub\Black-Jack\BlackJackSim\Debug\BlackJackSim.exe
