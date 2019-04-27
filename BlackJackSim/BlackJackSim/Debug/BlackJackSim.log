@@ -1,7 +1,6 @@
 ﻿D:\Visual Studio\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (ConsoleApplication1.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   BlackJack.cpp
-d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(156): warning C4018: '<': signed/unsigned mismatch
-d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(231): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(407): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(284): warning C4715: 'betting': not all control paths return a value
+d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(157): warning C4018: '<': signed/unsigned mismatch
+d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(232): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+d:\documents\github\black-jack\blackjacksim\blackjacksim\blackjack.cpp(405): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
   BlackJackSim.vcxproj -> D:\Documents\GitHub\Black-Jack\BlackJackSim\Debug\BlackJackSim.exe

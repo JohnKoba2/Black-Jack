@@ -75,11 +75,11 @@ CARD standardDeck[] = {
 	{Ace, Spade },
 };
 
-int games = 0, psh;
+int games = 0, psh, aces=0,sAces=0;
 int gwon = 0, quit = 0;
 int walet =0, bet =0, currentBet, tempWalet;
-int hand, handTotal = 0, dealer, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, dI = 0, ph = 0, dh = 0;
-bool game = true, play = true;
+int hand, handTotal = 0, dealer, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, dI = 0, ph = 0, dh = 0, splitTotal=0;
+bool game = true, play = true, start =true;  //exits
 string name;
 ofstream outFile;
 ifstream inFile;
@@ -94,11 +94,10 @@ CARD* shoe[DSIZE];
 
 int main()
 {
-	bool start = true;
 	while (start)
 	{
 		char Ans;
-		cout << "     2222222                          1111111\n"
+		cout << "      2222222                          1111111\n"
 			<< "    22222222222                      111111111\n"
 			<< "  222222   222222                  11111111111\n"
 			<< " 222222     222222              11111111111111\n"
@@ -123,10 +122,12 @@ int main()
 		case 'P':
 			//Begin the game
 			beginGame();
+			clearRound();
 			break;
 		case 'H':
 			//Display Help Screen
 			showHelp();
+			clearRound();
 			break;
 		case 'Q':
 			start = false;
@@ -267,20 +268,16 @@ int getCardValue(int value) { //checks the card values and prints a value of 10 
 
 int betting(int bet) {
 	bool valid = true;
-		while (valid) {
-			if (bet > 0 && bet <= walet) {
-				tempWalet = walet - bet;
-				currentBet = bet;
-				return currentBet;
-			}
-			else if (bet == 0 || bet > walet) {
+		while (bet == 0 || bet > walet) {
 				cout << "Please enter a valid bet between 1 and " << walet;
 				cout << "\n What is your bet?  ";
 				cin >> bet;
 				
-			}
-		
 		}
+
+		tempWalet = walet - bet;
+		currentBet = bet;
+		return currentBet;
 }
 
 void playGame() {
@@ -303,6 +300,7 @@ void playGame() {
 void playRound() {
 
 	while (choice != 'S') {
+		checkAces();
 		if (dealerTotal == 21 && handTotal != 21) 
 		{
 			gameLost(bet);
@@ -353,7 +351,7 @@ void playRound() {
 		dHand[3] = dTemp[1];
 		dealerTotal += dealTempTotal;
 		gameScreen();
-	
+		checkDealAces();
 		while (dealerTotal < handTotal -1 || dealerTotal < 18 ) {
 			clearScreen();
 			dealerDraw();
@@ -402,9 +400,9 @@ void gameDraw() {
 
 void gameWin() {
 	cout << "You Win! \n";
-	if (handTotal == 21 && cardCount == 2) {
-		
-		walet +=currentBet * 1.5;
+	if (handTotal == 21 && cardCount == 2)
+	{
+		walet += currentBet * 1.5;
 	}
 	else 
 	{
@@ -416,6 +414,11 @@ void playerDraw() {
 	
 	pHand[ph] = rankName[shoe[dI]->rank];
 	handTotal += getCardValue(shoe[dI]->rank);
+	
+	if (pHand[ph] == "11") {
+		aces++;
+	}
+
 	ph++;
 	pHand[ph] = shoe[dI]->Suit;
 	ph++;
@@ -426,10 +429,13 @@ void playerDraw() {
 
 void playerSplitDraw() {
 
-	pHand[psh] = rankName[shoe[dI]->rank];
-	handTotal += getCardValue(shoe[dI]->rank);
+	pSHand[psh] = rankName[shoe[dI]->rank];
+	splitTotal += getCardValue(shoe[dI]->rank);
+	if (pSHand[psh] == "11") {
+		aces++;
+	}
 	psh++;
-	pHand[psh] = shoe[dI]->Suit;
+	pSHand[psh] = shoe[dI]->Suit;
 	psh++;
 	dI++;
 	
@@ -441,6 +447,9 @@ void dealerDraw() {
 	if (dh == 2) {
 		dTemp[0] = rankName[shoe[dI]->rank];
 		dealTempTotal += getCardValue(shoe[dI]->rank);
+		if (dTemp[0] == "11") {
+			aces++;
+		}
 		dh++;
 		dTemp[1] = shoe[dI]->Suit;
 		dh++;
@@ -449,6 +458,9 @@ void dealerDraw() {
 	else {
 		dHand[dh] = rankName[shoe[dI]->rank];
 		dealerTotal += getCardValue(shoe[dI]->rank);
+		if (dHand[dh] == "11") {
+			aces++;
+		}
 		dh++;
 		dHand[dh] = shoe[dI]->Suit;
 		dh++;
@@ -484,7 +496,8 @@ void clearRound() {
 	dI = 0, ph = 0, dh = 0, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, tempWalet = 0, handTotal=0;
 	pHand[0] = "", pHand[1] = "", pHand[2] = "", pHand[3] = "", pHand[4] = "", pHand[5] = "", pHand[6] = "", pHand[7] = "", pHand[8] = "", pHand[9] = "";
 	pSHand[0] = "", pSHand[1] = "", pSHand[2] = "", pSHand[3] = "", pSHand[4] = "", pSHand[5] = "", pSHand[6] = "", pSHand[7] = "", pSHand[8] = "", pSHand[9] = "";
-	dHand[0] = "", dHand[1] = "", dHand[2] = "", dHand[3] = "", dHand[4] = "", dHand[5] = "", dHand[6] = "", dHand[7] = "", dHand[8] = "", dHand[9] = "",
+	dHand[0] = "", dHand[1] = "", dHand[2] = "", dHand[3] = "", dHand[4] = "", dHand[5] = "", dHand[6] = "", dHand[7] = "", dHand[8] = "", dHand[9] = "";
+	play = true, game = true;
 	shuffle();
 }
 
@@ -492,7 +505,7 @@ void playAgain() {
 	cout << "Would you like to play again? Y/N";
 	cin >> choice;
 	choice = toupper(choice);
-	while (game)
+	while (play)
 	{
 
 		switch (choice)
@@ -502,7 +515,7 @@ void playAgain() {
 		case 'N':
 		{
 			play = false;
-		//	goto main();
+		
 			break;
 		}
 		default: cout << "Please enter Y or N.";
@@ -511,14 +524,6 @@ void playAgain() {
 	}
 
 }
-
-class card {
-public:
-	string card;
-	string rank;
-	int value;
-
-};
 
 void pairSplit() {
 	pSHand[0] = pHand[2];
@@ -535,17 +540,18 @@ void pairSplit() {
 	cout << "What would you like to do with the first (Top) hand? \n H to Hit, S to Stay";
 	
 	while (choice != 'S') {
-		if (dealerTotal == 21 && handTotal != 21)
+		checkSplitAces();
+		if (dealerTotal == 21 && splitTotal != 21)
 		{
 			gameLost(bet);
 			break;
 		}
-		else if (handTotal >= 22)
+		else if (splitTotal >= 22)
 		{
 			gameLost(bet);
 			break;
 		}
-		else if (handTotal == 21) {
+		else if (splitTotal == 21) {
 			gameWin();
 			break;
 		}
@@ -567,3 +573,20 @@ void pairSplit() {
 		gameScreen();
 	}
 }
+
+
+void checkAces() {
+	if (handTotal < 21 && aces != 0) {
+		handTotal = handTotal - 10;
+	}
+}
+void checkSplitAces() {
+	if (splitTotal < 21 && aces != 0) {
+		splitTotal = splitTotal - 10;
+	}
+}
+	void checkDealAces() {
+		if (handTotal < 21 && aces != 0) {
+			handTotal = handTotal - 10;
+		}
+	}

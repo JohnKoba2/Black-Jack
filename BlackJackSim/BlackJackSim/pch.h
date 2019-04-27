@@ -56,4 +56,7 @@ void clearRound();
 void playAgain();
 void gameDraw();
 void pairSplit();
+void checkAces();
+void checkSplitAces();
+void checkDealAces();
 #endif //PCH_H
