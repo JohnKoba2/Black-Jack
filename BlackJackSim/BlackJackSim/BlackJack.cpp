@@ -15,11 +15,11 @@ string dHand[10];
 string pHand[10];
 string pSHand[10];
 string dTemp[2];
-const char* rankName[] = {
+const char* rankName[] = {  //rank names as shown on screen
 "","A","2","3","4","5","6","7","8","9","10","J","Q","K","A"
 };
 
-
+//the initial deck
 CARD standardDeck[] = { 
 	{Two, Heart},
 	{Three, Heart},
@@ -75,10 +75,10 @@ CARD standardDeck[] = {
 	{Ace, Spade },
 };
 
-int games = 0, psh, aces=0,sAces=0;
+int games = 0, psh, aces=0,sAces=0, dAces;
 int gwon = 0, quit = 0;
 int walet =0, bet =0, currentBet, tempWalet;
-int hand, handTotal = 0, dealer, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, dI = 0, ph = 0, dh = 0, splitTotal=0;
+int hand, handTotal = 0, dealer, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, dI = 0, ph = 0, dh = 0, splitTotal=0, splitCount=0;
 bool game = true, play = true, start =true;  //exits
 string name;
 ofstream outFile;
@@ -266,7 +266,7 @@ int getCardValue(int value) { //checks the card values and prints a value of 10 
 	return value;
 	}
 
-int betting(int bet) {
+int betting(int bet) { //reads in your bet and makes sure its a valid value
 	bool valid = true;
 		while (bet == 0 || bet > walet) {
 				cout << "Please enter a valid bet between 1 and " << walet;
@@ -282,7 +282,7 @@ int betting(int bet) {
 
 void playGame() {
 
-	
+	// the main play of the game calls all functions and returns here at the end of the round
 	while (play) {
 		clearScreen();
 		cout << "You currently have $" << walet << " how much would you like to bet?  ";
@@ -298,10 +298,13 @@ void playGame() {
 }
 
 void playRound() {
-
+	//checks to see if your standing if not runs through checking hand totals
 	while (choice != 'S') {
 		checkAces();
-		if (dealerTotal == 21 && handTotal != 21) 
+		if (cardCount ==5){
+			gameWin();
+		}
+		else if (dealerTotal == 21 && handTotal != 21) 
 		{
 			gameLost(bet);
 			break;
@@ -316,7 +319,7 @@ void playRound() {
 			break;
 		}
 		else {
-			cout << "What would you like to do?\n Press H to Hit \nPress S to Stand \n";
+			cout << "What would you like to do?\n Press H to Hit \nPress S to Stand \n"; //asks you to hit stand or conditionally double down or split
 				if (cardCount == 2) {
 					cout << "Press D to Double down";
 				}
@@ -326,7 +329,7 @@ void playRound() {
 			cin >> choice;
 			choice = toupper(choice);
 		}
-		switch (choice) {
+		switch (choice) {  
 		case 'H':
 			playerDraw();
 			break;
@@ -346,7 +349,7 @@ void playRound() {
 		clearScreen();
 		gameScreen();
 	}
-	if (choice == 'S') {
+	if (choice == 'S') { //once you stand it draws cards for the dealer til they bust, hit 18, or win
 		dHand[2] = dTemp[0];
 		dHand[3] = dTemp[1];
 		dealerTotal += dealTempTotal;
@@ -371,7 +374,7 @@ void playRound() {
 	}
 }
 
-void gameScreen() {
+void gameScreen() {  //prints out the game screen
 		cout << "*************************************\n"
 << "**            DEALER                 \n"
 << "**       Dealer Total: "<<  dealerTotal <<"                           \n"
@@ -387,7 +390,7 @@ void gameScreen() {
 
 
 
-
+//section deals with winning and losing
 int gameLost(int bet) {
 	cout << "Sorry you have lost.";
 	walet = walet - bet;
@@ -409,13 +412,13 @@ void gameWin() {
 		walet += currentBet;
 	}
 }
-
+//draws a card reads the first string adds it to the pHand Array checks for aces and then adds the suit to the next spot
 void playerDraw() {
 	
 	pHand[ph] = rankName[shoe[dI]->rank];
 	handTotal += getCardValue(shoe[dI]->rank);
 	
-	if (pHand[ph] == "11") {
+	if (pHand[ph] == "14") {
 		aces++;
 	}
 
@@ -426,12 +429,12 @@ void playerDraw() {
 	cardCount++;
 
 }
-
+//draws a card reads the first string adds it to the pSHand Array checks for aces and then adds the suit to the next spot
 void playerSplitDraw() {
 
 	pSHand[psh] = rankName[shoe[dI]->rank];
 	splitTotal += getCardValue(shoe[dI]->rank);
-	if (pSHand[psh] == "11") {
+	if (pSHand[psh] == "14") {
 		aces++;
 	}
 	psh++;
@@ -441,24 +444,27 @@ void playerSplitDraw() {
 	
 
 }
-
+//draws a card reads the first string adds it to the dHand Array checks for aces and then adds the suit to the next spot
 void dealerDraw() {
 	
-	if (dh == 2) {
+	if (dh == 2) { //if its the second card drawn, hides it from player until they stay.
 		dTemp[0] = rankName[shoe[dI]->rank];
 		dealTempTotal += getCardValue(shoe[dI]->rank);
-		if (dTemp[0] == "11") {
+		if (dTemp[0] == "14") {
 			aces++;
 		}
 		dh++;
 		dTemp[1] = shoe[dI]->Suit;
 		dh++;
 		dI++;
+
+		dHand[2] = "X";
+		dHand[3] = "X";
 	}
 	else {
 		dHand[dh] = rankName[shoe[dI]->rank];
 		dealerTotal += getCardValue(shoe[dI]->rank);
-		if (dHand[dh] == "11") {
+		if (dHand[dh] == "14") {
 			aces++;
 		}
 		dh++;
@@ -468,7 +474,7 @@ void dealerDraw() {
 	}
 
 }
-
+//shuffles the deck then draws the first cards
 void startGame() {
 	shuffle();
 	playerDraw();
@@ -477,23 +483,9 @@ void startGame() {
 	dealerDraw();
 }
 
-//int getHandTotal(int handTotal) {
-//	for (int i = 0; i <= cardCount; i++) {
-//		printf("%s %d\n", pHand[i * 2], i);
-//		handTotal += getCardValue(stoi(pHand[i*2]));
-//			
-//	}
-//	return handTotal;
-//}
-//
-//void getDealerTotal() {
-//	for (int i = 1; i <= cardCount; i++) {
-//		dealerTotal += getCardValue(stoi(dHand[i * 2]));
-//	}
-//}
-
+//sets all positions back to starting values for next round
 void clearRound() {
-	dI = 0, ph = 0, dh = 0, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, tempWalet = 0, handTotal=0;
+	dI = 0, ph = 0, dh = 0, dealerTotal = 0, dealTempTotal = 0, cardCount = 0, tempWalet = 0, handTotal=0, aces=0, sAces=0, dAces=0;
 	pHand[0] = "", pHand[1] = "", pHand[2] = "", pHand[3] = "", pHand[4] = "", pHand[5] = "", pHand[6] = "", pHand[7] = "", pHand[8] = "", pHand[9] = "";
 	pSHand[0] = "", pSHand[1] = "", pSHand[2] = "", pSHand[3] = "", pSHand[4] = "", pSHand[5] = "", pSHand[6] = "", pSHand[7] = "", pSHand[8] = "", pSHand[9] = "";
 	dHand[0] = "", dHand[1] = "", dHand[2] = "", dHand[3] = "", dHand[4] = "", dHand[5] = "", dHand[6] = "", dHand[7] = "", dHand[8] = "", dHand[9] = "";
@@ -501,7 +493,7 @@ void clearRound() {
 	shuffle();
 }
 
-void playAgain() {
+void playAgain() { //asks user if they want to play another round
 	cout << "Would you like to play again? Y/N";
 	cin >> choice;
 	choice = toupper(choice);
@@ -525,7 +517,7 @@ void playAgain() {
 
 }
 
-void pairSplit() {
+void pairSplit() { //same code as normal play but with a secondary hand if your split a pair
 	pSHand[0] = pHand[2];
 	pSHand[1] = pHand[3];
 	pHand[2] = "";
@@ -541,7 +533,10 @@ void pairSplit() {
 	
 	while (choice != 'S') {
 		checkSplitAces();
-		if (dealerTotal == 21 && splitTotal != 21)
+		if (splitCount == 5) {
+			gameWin();
+		}
+		else if (dealerTotal == 21 && splitTotal != 21)
 		{
 			gameLost(bet);
 			break;
@@ -575,18 +570,21 @@ void pairSplit() {
 }
 
 
-void checkAces() {
+void checkAces() { //checks to see if you have an ace before busting your hand
 	if (handTotal < 21 && aces != 0) {
 		handTotal = handTotal - 10;
+		aces--;
 	}
 }
 void checkSplitAces() {
-	if (splitTotal < 21 && aces != 0) {
+	if (splitTotal < 21 && sAces != 0) {
 		splitTotal = splitTotal - 10;
+		sAces--;
 	}
 }
 	void checkDealAces() {
-		if (handTotal < 21 && aces != 0) {
+		if (handTotal < 21 && dAces != 0) {
 			handTotal = handTotal - 10;
+			dAces--;
 		}
 	}
