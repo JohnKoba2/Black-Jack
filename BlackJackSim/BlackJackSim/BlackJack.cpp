@@ -204,7 +204,7 @@ void showHelp()
 	clearScreen();
 	cout << "In 21 (also referred to as Black Jack) your job is to beat the dealer. To do that you begin the game\n"
 		<< "each being dealt 2 cards, your cards are face up so you can see and one of the dealers card is face up. \n"
-		<< "The dealers second card is face down and the object is to either beat the dealer without going over 21. \n"
+		<< "The dealers second card is face down and the object is to beat the dealer without going over 21. \n"
 		<< "To do this you may Hit, Stand or Double Down. \n"
 		<< "Numbered cards (2-10) are the value printed on the card. J,Q,K are also worth 10. \n"
 		<< "A's are normally worth 11, however if your hand has a value higher than 11 they are worth 1. (ex AK is 21, K,2,A is 13. \n\n"
@@ -212,10 +212,10 @@ void showHelp()
 		<< "Once the cards are dealt you have several options open to you.\n"
 		<< "Press H to Hit. This will deal a new card from the deck and add it's value to your total.\n"
 		<< "Press S to Stand. This will signal that you believe your hand will beat the dealers. \n"
-		<< "Press D to Double Down. When you do this you will double your bet for exactly 1 more card, then stand."
+		<< "Press D to Double Down. When you do this you will double your bet for exactly 1 more card, then stand.\n"
 		<< "Press P to Split. This is only allowed with doubles, you split the hand into 2 new hands placing a second bet for the second hand.\n"
-		<< "In the event of a split hands will be played right to left (clockwise). \n\n"
-		<< "Once you Stand the dealer will reveal their second card and hit or stand up until they reach 18 or bust. Then the higher hand will win the bet.\n"
+		<< "In the event of a split hands will be played Top then Bottom. \n\n"
+		<< "Once you Stand the dealer will reveal their second card and hit or stand up until they reach 18, beat you or bust. Then the higher hand will win the bet.\n"
 		<< "In the case of a tie, a push will occur and you will get your initial bet back. "
 		<< endl << endl << endl;
 }		
